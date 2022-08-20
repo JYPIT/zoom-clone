@@ -21,6 +21,7 @@ const wsServer = new Server(httpServer, {
     credentials: true,
   },
 });
+
 instrument(wsServer, {
   auth: false,
 });

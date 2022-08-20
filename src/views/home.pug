@@ -10,7 +10,12 @@ html(lang="en")
         header
             h1 Room
 
-        main 
+        main
+            div#myStream
+                video#myFace(autoplay,playsinline, width="500",height="500")
+                button#mute Mute
+                button#camera Camera Off
+                select#cameras
             div#welcome
                 form#name
                     input(placeholder="nickname", type="text", required)
