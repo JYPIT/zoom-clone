@@ -35,11 +35,11 @@ async function getCameras() {
 
 async function getMedia(deviceId) {
   const initialConstrains = {
-    audio: false,
+    audio: true,
     video: { facingMode: "user" },
   };
   const cameraConstraints = {
-    audio: false,
+    audio: true,
     video: { deviceId: { exact: deviceId } },
   };
   try {

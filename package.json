@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Zoom Clone using NodeJS, WebRTC and Websockets",
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "build": "parcel src/views/home.pug",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -15,19 +17,21 @@
   "bugs": {
     "url": "https://github.com/JYPIT/zoom-clone/issues"
   },
-  "homepage": "https://github.com/JYPIT/zoom-clone#readme",
   "devDependencies": {
     "@babel/cli": "^7.18.10",
     "@babel/core": "^7.18.10",
     "@babel/node": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
     "nodemon": "^2.0.19",
+    "parcel-bundler": "^1.12.5",
     "socket.io": "^4.5.1"
   },
   "dependencies": {
     "@socket.io/admin-ui": "^0.4.0",
     "express": "^4.18.1",
+    "gh-pages": "^4.0.0",
     "pug": "^3.0.2",
     "ws": "^7.5.3"
-  }
+  },
+  "homepage": "https:/JYPIT.github.io/zoom-clone"
 }
