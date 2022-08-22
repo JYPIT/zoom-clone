@@ -9,13 +9,7 @@ html(lang="en")
     body 
         header
             h1 Room
-
         main
-            div#myStream
-                video#myFace(autoplay,playsinline, width="500",height="500")
-                button#mute Mute
-                button#camera Camera Off
-                select#cameras
             div#welcome
                 form#name
                     input(placeholder="nickname", type="text", required)
@@ -25,6 +19,12 @@ html(lang="en")
                     button Enter Room           
                 h4 Open Rooms: 
                 ul
+            div#call
+                div#myStream
+                    video#myFace(autoplay,playsinline, width="500",height="500")
+                    button#mute Mute
+                    button#camera Camera Off
+                    select#cameras
             div#room
                 h3
                 ul 

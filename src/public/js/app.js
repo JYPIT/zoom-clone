@@ -1,16 +1,18 @@
 const socket = io();
-const welcome = document.getElementById("welcome");
-const form = welcome.querySelector("form#roomForm");
-const room = document.getElementById("room");
-
+const call = document.getElementById("call");
 const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("mute");
 const cameraBtn = document.getElementById("camera");
 const camerasSelect = document.getElementById("cameras");
 
+call.hidden = true;
+
 let myStream;
 let muted = false;
 let cameraOff = false;
+let myPeerConnection;
+
+// Call Form
 
 async function getCameras() {
   try {
@@ -33,15 +35,15 @@ async function getCameras() {
 
 async function getMedia(deviceId) {
   const initialConstrains = {
-    audio: true,
+    audio: false,
     video: { facingMode: "user" },
   };
-  const cameraConstrains = {
-    audio: true,
-    video: { dvicdId: { exact: deviceId } },
+  const cameraConstraints = {
+    audio: false,
+    video: { deviceId: { exact: deviceId } },
   };
   try {
-    myStream = await navigator.mediaDevices.getUserMedia(deviceId ? cameraConstrains : initialConstrains);
+    myStream = await navigator.mediaDevices.getUserMedia(deviceId ? cameraConstraints : initialConstrains);
     myFace.srcObject = myStream;
     if (!deviceId) {
       await getCameras();
@@ -50,8 +52,6 @@ async function getMedia(deviceId) {
     console.log(e);
   }
 }
-
-getMedia();
 
 function handleMuteClick() {
   myStream.getAudioTracks().forEach((track) => (track.enabled = !track.enabled));
@@ -80,6 +80,12 @@ async function handleCameraChange() {
 muteBtn.addEventListener("click", handleMuteClick);
 cameraBtn.addEventListener("click", handleCameraClick);
 camerasSelect.addEventListener("input", handleCameraChange);
+
+// Welcome Form
+
+const welcome = document.getElementById("welcome");
+const form = welcome.querySelector("form#roomForm");
+const room = document.getElementById("room");
 
 room.hidden = true;
 
@@ -119,7 +125,7 @@ function handleRoomSubmit(event) {
 }
 
 function showRoom() {
-  welcome.hidden = true;
+  startMedia();
   room.hidden = false;
   const h3 = room.querySelector("h3");
   h3.innerText = `Room ${roomName}`;
@@ -130,7 +136,22 @@ function showRoom() {
 const nameForm = welcome.querySelector("form#name");
 nameForm.addEventListener("submit", handleNicknameSubmit);
 
-socket.on("welcome", (user, newCount) => {
+async function startMedia() {
+  welcome.hidden = true;
+  call.hidden = false;
+  await getMedia();
+  makeConnection();
+}
+
+socket.on("offer", (offer) => {
+  console.log(offer);
+});
+
+socket.on("welcome", async (user, newCount) => {
+  const offer = await myPeerConnection.createOffer();
+  myPeerConnection.setLocalDescription(offer);
+  console.log("sent the offer");
+  socket.emit("offer", offer, roomName);
   const h3 = room.querySelector("h3");
   h3.innerText = `Room ${roomName} (${newCount})`;
   addMessage(`${user} Joined`);
@@ -156,3 +177,10 @@ socket.on("room_change", (rooms) => {
     roomList.append(li);
   });
 });
+
+//RTC Code
+
+function makeConnection() {
+  myPeerConnection = new RTCPeerConnection();
+  myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));
+}
